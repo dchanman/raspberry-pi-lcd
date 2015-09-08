@@ -1,0 +1,45 @@
+### BEGIN INIT INFO
+# Provides: LCD - NAS and System Usage
+# Required-Start: $remote_fs $syslog
+# Required-Stop:  $remote_fs $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop 0 1 6
+# Short-Description: Liquid Crystal Display
+# Description: NAS usage, System information
+### END INIT INFO
+
+#!/bin/sh
+#/etc/init.d/pi-lcd-nas
+
+export HOME
+
+PROCESS_NAME="pi-lcd-nas"
+
+start() {
+	echo "Starting LCD"
+	start-stop-daemon -S -q --make-pidfile --pidfile /var/run/$PROCESS_NAME.pid --exec /usr/bin/python -- /home/pi/scratch/pi-nas-lcd/$PROCESS_NAME.py > /dev/null 2>&1 &
+}
+
+stop() {
+	echo "Stopping LCD"
+	start-stop-daemon -K -q -p /var/run/$PROCESS_NAME.pid -s 15
+}
+
+case "$1" in
+     start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    restart)
+	start
+	stop
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+	
